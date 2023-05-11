@@ -1,0 +1,30 @@
+name: Testing Failure Email
+
+on: [push]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Cypress tests
+        run: npm test
+
+      - name: Send email with results if tests fail
+        if: ${{ success() }}
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.sendgrid.net
+          server_port: 587
+          username: ${{ secrets.SENDGRID_USERNAME }}
+          password: ${{ secrets.SENDGRID_PASSWORD }}
+          subject: Cypress test results - Failed
+          to: fariahricha1301@gmail.com
+          from: faria.habib@dsinnovators.com
+          body: The Cypress tests have failed.
